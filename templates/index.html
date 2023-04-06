@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" />
+    <title>URL Converter</title>
+    <script src="{{ url_for('static', filename='JS/main.js') }}"></script>
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+    <!-- JavaScript and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+</head>
+<body>
+    Какой-то текст
+    <button type="button" class="btn btn-primary">Primary</button>
+    <div id="proba_outer" style="background-color: blueviolet;">---</div>
+    <p>Введите метод запроса <input type="text" id="method"></input></p>
+    <p>Номер датчика <input type="text" id="sensor"></input></p>
+    <p>Новая погрешность <input type="text" id="data_sensor"></input></p>
+    <p><button onclick="sendPOST()">Изменить характеристики датчика</button></p>
+    <script>
+        function sendPOST() {
+            const temp_method = document.getElementById('method').value
+            const temp_sensor = document.getElementById('sensor').value
+            const temp_data = document.getElementById('data_sensor').value
+
+            obj_for_request = new Object({
+                name: temp_sensor,
+                data: temp_data
+            })
+            fetch('http://127.0.0.1:5000/todolist/proba/', {
+                method: temp_method,
+                headers: {
+                'Content-Type': 'application/json'
+            },
+                body: JSON.stringify(obj_for_request)                
+            }).then(response => {
+                console.log(response)
+                const otvet = response.json()
+                console.log(otvet)
+                const field = document.getElementById('proba_outer')
+                console.log(field)
+                field.innerHTML = 'Данные датчика изменены'
+            })
+        }
+        </script>
+</body>
+</html>
