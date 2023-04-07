@@ -1,14 +1,12 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from random import choice
+from shorter import create_short_url
 
 
 app = Flask(__name__, static_folder='static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@localhost:5432/url_converter'
 db = SQLAlchemy(app)
-
-
 
 
 class ModelURL(db.Model):
@@ -19,7 +17,7 @@ class ModelURL(db.Model):
     date = db.Column(db.Float, default=datetime.timestamp(datetime.utcnow()))
 
     def __repr__(self):
-        return f"Short_URL: {self.short_url}\nURL: {self.url}\nCreate date: {datetime.fromtimestamp(self.date)}\n<dop: primary_id = {self.id}>>"
+        return f"Short_URL: {self.short_url}\nURL: {self.url}\nCreate date: {datetime.fromtimestamp(self.date)}\n<dop: primary_id = {self.id}>"
 '''
 Создание таблиц по указанным моделям
 '''
@@ -28,46 +26,53 @@ class ModelURL(db.Model):
 # >>>   db.create_all()
 
 
-
-
-database_imitation = {}
-variable_symbols = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-                    'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
-                    'u', 'v', 'w', 'x', 'y', 'z',
-                    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-                    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-                    'U', 'V', 'W', 'X', 'Y', 'Z',
-                    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-
-
-def create_short_url():
-    result = ''
-    for _ in range(10):
-        result += choice(variable_symbols)
-    return result
-
-def event(URL):
-    for _ in range(2):
-        short_url = create_short_url()
-        temp = database_imitation.get('short_url')
-        if temp is not None:
-            continue
-        database_imitation[short_url] = URL
-        return short_url
-
-
-
-
 # ОБРАБОТЧИКИ СТРАНИЦ
-
-
 
 
 @app.route('/main')
 def index():
     return render_template('index.html')
 
+@app.route('/api', methods=['POST'])
+def event():
+    if request.method == 'POST':
+        html_request = request.get_json()
+        url = html_request['url']
+        try:
+            short_url = create_short_url()
+            db_data = ModelURL.query.filter_by(short_url=short_url).first()
+            if db_data is not None:
+                temp = {'data': None, 'code': '3', 'comment': 'Created short url already using in DataBase'}
+            new_data = ModelURL(short_url=short_url, url=url)
+            db.session.add(new_data)
+            db.session.commit()
+            print('Данные в БД добавлены')
+            temp = {'data': f'http://127.0.0.1:5000/{short_url}', 'code': '1', 'comment': 'Short URL created. Added to DataBase'}
+        except Exception as e:
+            db.session.rollback()
+            temp = {'data': None, 'code': '2', 'comment': 'Error on stage work with DataBase'}
+            print('Ошибка добавления в БД', str(e))
+        content = jsonify(temp)
+        response = make_response(content)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    #return redirect('/main')
+
+@app.route('/<short_url>')
+def link(short_url):
+    try:
+        db_data = ModelURL.query.filter_by(short_url=short_url).first()
+        if db_data is None:
+            temp = {'data': None, 'code': '12', 'comment': 'There is not this short URL in DataBase'}
+        else:
+            temp = {'data': db_data.url, 'code': '11', 'comment': 'Short URL executed from DataBase'}
+    except Exception as e:
+        temp = {'data': None, 'code': '13', 'comment': 'Error on stage work with DataBase'}
+        print('Ошибка соединения с БД', str(e))
+    if temp['data'] is None:
+        return render_template('wrong.html', data=temp)
+    else:
+        return render_template('success.html', data=temp)
 
 if __name__ == '__main__':
     app.run(debug=True)
-
