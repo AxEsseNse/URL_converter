@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, jsonify, make_response
+from flask import Flask, render_template, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from shorter import create_short_url
@@ -72,7 +72,7 @@ def link(short_url):
     if temp['data'] is None:
         return render_template('wrong.html', data=temp)
     else:
-        return render_template('success.html', data=temp)
+        return render_template('redirect.html', data=temp)
 
 if __name__ == '__main__':
     app.run(debug=True)

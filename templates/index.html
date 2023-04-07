@@ -10,25 +10,26 @@
     <script src="{{ url_for('static', filename='JS/main.js') }}"></script>
     <link rel="icon" href="{{ url_for('static', filename='IMG/favicon.png') }}" sizes="32x32" type="image/png">
 </head>
-<body class="text-center" style="background-color: #EEE0E5";">
-    <div class="container" style="padding-top: 60px;">
-        <div class="row" style="align-items: center;">
+<body class="text-center">
+    <div class="container mainlogo">
+        <div class="row">
             <div class="col-2">
                 <img class="mb-4" src="{{ url_for('static', filename='IMG/logo.png') }}" alt="URl" width="72" height="72">
             </div>
             <div class="col-10">
-                <p class="text-left" style="font-size: 40px;">URL Shorter</p>
+                <p class="text-left">URL Shorter</p>
             </div>
         </div>
     </div>
     <div class="container text-left">
-        <div class="row" style="padding-left: 25px;">
+        <div class="row description">
             <p>Надоели длинные ссылки? Воспользуйтесь данным сервисом, чтобы привести вашу ссылку к более приятному виду.</p>
             <p>Просто вставьте вашу ссылку в поле ниже и нажмите на кнопку</p>
         </div>
-        <div class="row gx-5" style="align-items: center;">
+        <div class="row text-danger flashmessage" id="flashmessage"></div>
+        <div class="row gx-5 inputblock">
             <div class="col-10">
-                <div class="p-3 border">
+                <div class="p-3">
                     <input type="text" class="form-control" style="background-color: #FFE4E1;" id="inputField" placeholder="Введите ссылку, которую нужно сократить" required="" autofocus="">
                 </div>
             </div>
@@ -36,9 +37,9 @@
                 <button class="btn btn-lg btn-info btn-block" onclick="mainEvent()">Сократить</button>
             </div>
         </div>
-        <div class="row gx-5 collapse" id="response_collapse" style="align-items: center;">
-            <div class="container col-3" style="font-size: 30px; margin-left: 50px; padding-left: 30px; width: 450px; height: 50px; border-radius: 30px 0px 30px 10px; background-color: burlywood;">
-                <div id="short_url">
+        <div class="row gx-5 collapse hiddenblock" id="response_collapse">
+            <div class="container col-3 mainfield">
+                <div class="mainurl" id="short_url">
                     <a id="link"></a>
                 </div>
             </div>
@@ -49,7 +50,7 @@
         </div>
     </div>
     <div id="hidden_div"></div>
-    <div class="text-center" style="bottom: 10px; position: absolute; width: 100%; vertical-align: middle; border-top: 1px solid #C1CDCD;">
+    <div class="text-center axefooter">
         <p class="mt-5 mb-3 text-muted">AxEsseNse &copy; 2023</p>
     </div>
 </body>
