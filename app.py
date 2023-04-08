@@ -18,6 +18,16 @@ class ModelURL(db.Model):
 
     def __repr__(self):
         return f"Short_URL: {self.short_url}\nURL: {self.url}\nCreate date: {datetime.fromtimestamp(self.date)}\n<dop: primary_id = {self.id}>"
+
+class ModelFeedback(db.Model):
+    __tablename__ = 'feedback'
+    id = db.Column(db.Integer, primary_key=True)
+    msg = db.Column(db.Text)
+    date = db.Column(db.Float, default=datetime.timestamp(datetime.utcnow()))
+
+    def __repr__(self):
+        return f"Обращение № {self.id}\nПолучено: {datetime.fromtimestamp(self.date)}\nСообщение: {self.msg}"
+
 '''
 Создание таблиц по указанным моделям
 '''
@@ -29,11 +39,11 @@ class ModelURL(db.Model):
 # ОБРАБОТЧИКИ СТРАНИЦ
 
 
-@app.route('/main')
+@app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/api', methods=['POST'])
+@app.route('/api/main', methods=['POST'])
 def event():
     if request.method == 'POST':
         html_request = request.get_json()
@@ -56,7 +66,6 @@ def event():
         response = make_response(content)
         response.headers['Content-Type'] = 'application/json'
         return response
-    #return redirect('/main')
 
 @app.route('/<short_url>')
 def link(short_url):
@@ -73,6 +82,26 @@ def link(short_url):
         return render_template('wrong.html', data=temp)
     else:
         return render_template('redirect.html', data=temp)
+
+@app.route('/api/feedback', methods=['POST'])
+def feedback():
+    if request.method == 'POST':
+        html_request = request.get_json()
+        msg = html_request['msg']
+        try:
+            new_data = ModelFeedback(msg=msg)
+            db.session.add(new_data)
+            db.session.commit()
+            print('Данные в БД добавлены')
+            temp = {'data': 'success'}
+        except Exception as e:
+            db.session.rollback()
+            temp = {'data': 'error'}
+            print('Ошибка добавления в БД', str(e))
+        content = jsonify(temp)
+        response = make_response(content)
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
 if __name__ == '__main__':
     app.run(debug=True)

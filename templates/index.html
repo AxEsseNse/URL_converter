@@ -11,6 +11,7 @@
     <link rel="icon" href="{{ url_for('static', filename='IMG/favicon.png') }}" sizes="32x32" type="image/png">
 </head>
 <body class="text-center">
+    <!-- Logo block -->
     <div class="container mainlogo">
         <div class="row">
             <div class="col-2">
@@ -21,6 +22,7 @@
             </div>
         </div>
     </div>
+    <!-- Main block -->
     <div class="container text-left">
         <div class="row description">
             <p>Надоели длинные ссылки? Воспользуйтесь данным сервисом, чтобы привести вашу ссылку к более приятному виду.</p>
@@ -37,6 +39,7 @@
                 <button class="btn btn-lg btn-info btn-block" onclick="mainEvent()">Сократить</button>
             </div>
         </div>
+        <!-- Поле ответа от сервера -->
         <div class="row gx-5 collapse hiddenblock" id="response_collapse">
             <div class="container col-3 mainfield">
                 <div class="mainurl" id="short_url">
@@ -49,9 +52,89 @@
             <div class="col-5"></div>
         </div>
     </div>
+    <!-- Вспомогательное поле -->
     <div id="hidden_div"></div>
+    <!-- Footer -->
     <div class="text-center axefooter">
-        <p class="mt-5 mb-3 text-muted">AxEsseNse &copy; 2023</p>
+        <hr>
+        <div class="container">
+            <div class="row" style="margin-top: 10px;">
+                <div class="col text-left mt-2 mb-2 text-muted">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#contact">
+                        Контакты
+                    </button>
+                </div>
+                <div class="col text-center mt-2 mb-2 text-muted" style="margin-top: 100px;">
+                    AxEsseNse &copy; 2023
+                </div>
+                <div class="col text-right mt-2 mb-2 text-muted">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#feedback">
+                        Обратная связь
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal feedback -->
+    <div class="modal fade" id="feedback" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Обратная связь</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="text-left">
+                        Если вы столкнулись с проблемой или у вас есть пожелания по работе данного сервиса, просим вас оставить свое сообщение ниже.
+                    </div>
+                    <form style="margin-top: 10px;">
+                        <div class="mb-3">
+                            <textarea class="form-control" id="feedbackmessage"></textarea>
+                        </div>
+                    </form>
+                    <div class="row text-danger flashmessagemodal" id="flashmessagemodal" style="margin-left: 0px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-info" onclick="feedback()">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <!-- Modal contact -->
+    <div class="modal fade" id="contact" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Python Developer</h5>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid text-left">
+                        <div class="row">
+                            <div class="col"><p>Добрый день!</p>Я парень, который решил связать свою жизнь с IT индустрией и это мой личный Пет-проект. По любым вопросам можете связаться со мной через контакты снизу</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-4 text-center"><strong>Git</strong></div>
+                        <div class="col-4 text-center"><strong>Discord</strong></div>
+                        <div class="col-4 text-center"><strong>Telegram</strong></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 text-center">
+                            <a href="https://github.com/AxEsseNse" title="github">AxEsseNse</a>
+                        </div>
+                        <div class="col-4 text-center">
+                            AxEsseNse#7428
+                        </div>
+                        <div class="col-4 text-center">
+                            @Orueloral
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
