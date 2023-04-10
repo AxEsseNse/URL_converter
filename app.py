@@ -93,13 +93,12 @@ def link(short_url):
 def event():
     html_request = request.get_json()
     url = html_request['url']
-    print(url_validator(url))
 
     if url_validator(url):
         service = Service()
         temp = service.add_url(url)
     else:
-        temp = {'data': None, 'comment': 'URL incorrect'}
+        temp = {'data': 'incorrect url', 'comment': 'URL incorrect'}
 
     content = jsonify(temp)
     response = make_response(content)

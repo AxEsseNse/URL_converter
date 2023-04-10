@@ -1,37 +1,8 @@
-function flashMessage() {
-    const flash_field = document.getElementById('flashmessage');
-    flash_field.innerHTML = 'Введенная ссылка некорректна';
-    setTimeout(function() {
-        const flash_field = document.getElementById('flashmessage');
-        flash_field.innerHTML = '';
-    }, 5000)
-}
-
-function isCorrectURL(url) {
-    if (url.startsWith('https://www.')) {
-        return true
-    }
-    if (url.startsWith('http://www.')) {
-        return true
-    }
-    if (url.startsWith('www.')) {
-        return true
-    }
-    return false
-}
-
 function mainEvent() {
-    const data = document.getElementById('inputField').value
-    if (!isCorrectURL(data)) {
-        flashMessage()
-        return
-    }
-
-    const flash_field = document.getElementById('flashmessage');
-    flash_field.innerHTML = '';
-
+    const data = document.getElementById('inputField').value;
+    
     obj_for_request = new Object({
-        url: data.startsWith('www.') ? 'http://' + data : data
+        url: data
     })
 
     fetch('http://127.0.0.1:5000/api/main', {
@@ -41,19 +12,32 @@ function mainEvent() {
     },
         body: JSON.stringify(obj_for_request)                
     }).then(response => {
-        return response.json()
+        return response.json();
+    }).then(server_info => {
+        console.log(server_info.comment);
+        return server_info.data;
     }).then(server_data => {
-        const short_url = server_data.data
+        if (server_data == 'incorrect url') {
+            document.getElementById('response_collapse').classList.remove("show");
+            document.getElementById('flashmessage').innerHTML = 'Введенная ссылка некорректна';
+            setTimeout(function() {
+                document.getElementById('flashmessage').innerHTML = '';
+            }, 5000)
+            return
+        }
+        document.getElementById('flashmessage').innerHTML = '';
+        const short_url = server_data
         const div_for_link = document.getElementById('short_url')
         const link = document.createElement('a')
         link.href = short_url
         link.title = 'Ваша ссылка'
         link.appendChild(document.createTextNode(short_url))
         div_for_link.replaceChildren(link)
-        const collapse = document.getElementById('response_collapse')
-        collapse.classList.add("show")
+        const collapse_element = document.getElementById('response_collapse')
+        collapse_element.classList.add("show")
     })
 }
+
 
 function copyURL() {
     const short_url = document.getElementsByTagName('a')[0].href;
