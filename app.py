@@ -65,6 +65,10 @@ class Service:
                 db.session.commit()
             return {'data': 'Ваще обращение успешно зарегистрировано.'}
 
+    def is_correct(self, short_url):
+        self.db_data = ModelURL.query.filter_by(short_url=short_url).first()
+        return False if self.db_data is None else True
+
 
 # ОБРАБОТЧИКИ СТРАНИЦ
 
@@ -76,19 +80,11 @@ def index():
 
 @app.route('/<short_url>')
 def link(short_url):
-    try:
-        db_data = ModelURL.query.filter_by(short_url=short_url).first()
-        if db_data is None:
-            temp = {'data': None, 'code': '12', 'comment': 'There is not this short URL in DataBase'}
-        else:
-            temp = {'data': db_data.url, 'code': '11', 'comment': 'Short URL executed from DataBase'}
-    except Exception as e:
-        temp = {'data': None, 'code': '13', 'comment': 'Error on stage work with DataBase'}
-        print('Ошибка соединения с БД', str(e))
-    if temp['data'] is None:
-        return render_template('wrong.html', data=temp)
+    service = Service()
+    if service.is_correct(short_url):
+        return render_template('redirect.html', data={'data': service.db_data.url, 'comment': 'URL executed from DataBase'})
     else:
-        return render_template('redirect.html', data=temp)
+        return render_template('wrong.html', data={'data': None, 'comment': 'There is not this short URL in DataBase'})
 
 
 # API
@@ -98,7 +94,6 @@ def event():
     url = html_request['url']
 
     service = Service()
-    #user_session = session.Session
     temp = service.add_url(url)
 
     content = jsonify(temp)

@@ -10,7 +10,7 @@
     <script src="{{ url_for('static', filename='JS/wrong.js') }}"></script>
     <link rel="icon" href="{{ url_for('static', filename='IMG/favicon.png') }}" sizes="32x32" type="image/png">
 </head>
-<body class="text-center"></body>
+<body class="text-center" onload="consoleLog()"></body>
     <div class="container mainlogo">
         <div class="row">
             <div class="col-2">
@@ -27,6 +27,7 @@
             <p>Помните, срок хранения созданных ссылок - <spin style="font-size: 26px;"><strong>7 дней</strong></spin></p>
         </div>
     </div>
+    <div id="responselog" style="display: none;">{{data['comment']}}</div>
     <div class="text-center axefooter">
         <p class="mt-5 mb-3 text-muted">AxEsseNse &copy; 2023</p>
     </div>
