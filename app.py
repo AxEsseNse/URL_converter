@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy, session
 from datetime import datetime
 from shorter import create_short_url
+from validators import url as url_validator
 
 
 # Конфигурация
@@ -80,7 +81,7 @@ def index():
 
 @app.route('/<short_url>')
 def link(short_url):
-    service = Service()
+    service = Service() ### Жека, этот экземпляр надо как-то удалять? Типо они сами удаляются или мы так и будем хранить миллион экземпляров?
     if service.is_correct(short_url):
         return render_template('redirect.html', data={'data': service.db_data.url, 'comment': 'URL executed from DataBase'})
     else:
@@ -92,9 +93,13 @@ def link(short_url):
 def event():
     html_request = request.get_json()
     url = html_request['url']
+    print(url_validator(url))
 
-    service = Service()
-    temp = service.add_url(url)
+    if url_validator(url):
+        service = Service()
+        temp = service.add_url(url)
+    else:
+        temp = {'data': None, 'comment': 'URL incorrect'}
 
     content = jsonify(temp)
     response = make_response(content)
