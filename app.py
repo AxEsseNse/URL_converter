@@ -57,14 +57,16 @@ class Service:
     def add_feedback(msg):
         db_data = ModelFeedback.query.filter_by(msg=msg).first()
         if db_data is not None:
-            return {'data': f'Обращение с идентичным содержимым уже зарегистрировано. Дата обращения: {datetime.fromtimestamp(db_data.date)}'}
+            date = f"Дата обращения: {datetime.fromtimestamp(db_data.date).strftime('%d.%m.%Y')}"
+            return {'data': 'Обращение с идентичным содержимым уже зарегистрировано.', 'date': date, 'code': False}
         else:
             new_ses = session.Session(db)
             with new_ses.begin():
                 new_data = ModelFeedback(msg=msg)
                 db.session.add(new_data)
                 db.session.commit()
-            return {'data': 'Ваще обращение успешно зарегистрировано.'}
+            date = f"Дата Вашего обращения: {datetime.fromtimestamp(ModelFeedback.query.filter_by(msg=msg).first().date).strftime('%d.%m.%Y')}"
+            return {'data': 'Ваще обращение успешно зарегистрировано.', 'date': date, 'code': True}
 
     def is_correct(self, short_url):
         self.db_data = ModelURL.query.filter_by(short_url=short_url).first()
@@ -122,3 +124,5 @@ def feedback():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+

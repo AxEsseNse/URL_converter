@@ -52,19 +52,23 @@ function copyURL() {
 
 function feedback() {
     const feedback = document.getElementById('feedbackmessage').value;
+
     if (feedback == '') {
         const flash_field = document.getElementById('flashmessagemodal');
-        flash_field.classList.remove('text-success');
-        flash_field.classList.add('text-danger');
+        if (!flash_field.classList.contains('text-danger')) {
+            flash_field.classList.add('text-danger');
+        }
+        if (flash_field.classList.contains('text-success')) {
+            flash_field.classList.remove('text-success');
+        }
         flash_field.innerHTML = 'Сообщение не должно быть пустым';
+        document.getElementById('flashmessagemodaldate').innerHTML = '';
         setTimeout(function() {
-            const flash_field = document.getElementById('flashmessagemodal');
-            flash_field.innerHTML = '';
-        }, 5000);
+            document.getElementById('flashmessagemodal').innerHTML = '';
+        }, 1000);
         return
     } else {
-        const flash_field = document.getElementById('flashmessagemodal');
-        flash_field.innerHTML = '';
+        document.getElementById('flashmessagemodal').innerHTML = '';
     }
 
     obj_for_request = new Object({
@@ -81,17 +85,29 @@ function feedback() {
         return response.json()
     }).then(server_data => {
         const response = server_data.data;
+        const way = server_data.code;
         const flash_field = document.getElementById('flashmessagemodal');
-        if (response == 'success') {
-            const flash_msg = 'Сообщение успешно отправлено';
-            flash_field.classList.remove('text-danger');
-            flash_field.classList.add('text-success');
-            flash_field.innerHTML = flash_msg;
+        const flash_field2 = document.getElementById('flashmessagemodaldate');
+        if (way) {
+            if (flash_field.classList.contains('text-danger')) {
+                flash_field.classList.remove('text-danger');
+            }
+            if (!flash_field.classList.contains('text-success')) {
+                flash_field.classList.add('text-success');
+            }
+            flash_field.innerHTML = response
+            const feedback_date = server_data.date
+            flash_field2.innerHTML = feedback_date
         } else {
-            flash_field.classList.remove('text-success');
-            flash_field.classList.add('text-danger');
-            const flash_msg = 'Ошибка соединение с сервером';
-            flash_field.innerHTML = flash_msg;
+            if (!flash_field.classList.contains('text-danger')) {
+                flash_field.classList.add('text-danger');
+            }
+            if (flash_field.classList.contains('text-success')) {
+                flash_field.classList.remove('text-success');
+            }
+            flash_field.innerHTML = response
+            const feedback_date = server_data.date
+            flash_field2.innerHTML = feedback_date
         }
     })
 }
