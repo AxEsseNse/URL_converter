@@ -18,7 +18,7 @@ class ModelURL(db.Model):
     __tablename__ = 'url'
     id = db.Column(db.Integer, primary_key=True)
     short_url = db.Column(db.Text, unique=True)
-    url = db.Column(db.Text)
+    url = db.Column(db.Text, unique=True)
     date = db.Column(db.Float, default=datetime.timestamp(datetime.utcnow()))
 
     def __repr__(self):
