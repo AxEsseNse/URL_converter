@@ -20,6 +20,5 @@ depends_on = None
 def upgrade() -> None:
     op.add_column('url', sa.Column('date_last_use', sa.Float(), default=datetime.timestamp(datetime.utcnow())))
 
-
 def downgrade() -> None:
     op.drop_column('url', 'date_last_use')

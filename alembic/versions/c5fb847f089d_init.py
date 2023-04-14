@@ -25,6 +25,5 @@ def upgrade() -> None:
                     sa.Column('date_creating', sa.Float(), default=datetime.timestamp(datetime.utcnow())),
                     )
 
-
 def downgrade() -> None:
     op.drop_table('url')

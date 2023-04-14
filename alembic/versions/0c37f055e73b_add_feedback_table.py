@@ -24,6 +24,5 @@ def upgrade() -> None:
                     sa.Column('date', sa.Float(), default=datetime.timestamp(datetime.utcnow())),
                     )
 
-
 def downgrade() -> None:
     op.drop_table('feedback')
