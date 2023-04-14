@@ -19,10 +19,23 @@ class ModelURL(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     short_url = db.Column(db.Text, unique=True)
     url = db.Column(db.Text, unique=True)
-    date = db.Column(db.Float, default=datetime.timestamp(datetime.utcnow()))
+    date_creating = db.Column(db.Float, default=datetime.timestamp(datetime.utcnow()))
+    count_use = db.Column(db.Integer, default=1)
+    date_last_use = db.Column(db.Float)
+
 
     def __repr__(self):
-        return f"Short_URL: {self.short_url}\nURL: {self.url}\nCreate date: {datetime.fromtimestamp(self.date)}\n<dop: primary_id = {self.id}>"
+        return f'ModelURL PK:{self.id}'
+
+    def __str__(self):
+        return f"\
+Short_URL: {self.short_url}\n\
+URL: {self.url}\n\
+Create date: {datetime.fromtimestamp(self.date_creating)}\n\
+Count use: {self.count_use}\n\
+Last use: {datetime.fromtimestamp(self.date_last_use)}\n\
+<dop: primary_id = {self.id}>"
+
 
 class ModelFeedback(db.Model):
     __tablename__ = 'feedback'
@@ -31,7 +44,13 @@ class ModelFeedback(db.Model):
     date = db.Column(db.Float, default=datetime.timestamp(datetime.utcnow()))
 
     def __repr__(self):
-        return f"Обращение № {self.id}\nПолучено: {datetime.fromtimestamp(self.date)}\nСообщение: {self.msg}"
+        return f'ModelFeedback PK:{self.id}'
+
+    def __str__(self):
+        return f"\
+Обращение № {self.id}\n\
+Получено: {datetime.fromtimestamp(self.date)}\n\
+Сообщение: {self.msg}\n"
 
 
 # Сервис
@@ -49,6 +68,11 @@ class Service:
                 with new_ses.begin():
                     new_data = ModelURL(short_url=short_url, url=url)
                     db.session.add(new_data)
+                    db.session.flush()
+                    new_data.date_last_use = new_data.date_creating
+                    # Показать как работает вывод в консоль
+                    #print([new_data])
+                    #print(new_data)
                     db.session.commit()
                 return {'data': f'{BASE_URL}{short_url}', 'comment': 'Your URL added to DataBase. Short URL returned.'}
             else:
@@ -65,9 +89,24 @@ class Service:
             with new_ses.begin():
                 new_data = ModelFeedback(msg=msg)
                 db.session.add(new_data)
+                # Показать как работает вывод в консоль
+                #db.session.flush()
+                #print([new_data])
+                #print(new_data)
                 db.session.commit()
             date = f"Дата Вашего обращения: {datetime.fromtimestamp(ModelFeedback.query.filter_by(msg=msg).first().date).strftime('%d.%m.%Y')}"
             return {'data': 'Ваще обращение успешно зарегистрировано.', 'date': date, 'code': True}
+
+    def link_url(self, short_url):
+        if self.is_correct(short_url):
+            new_ses = session.Session(db)
+            with new_ses.begin():
+                self.db_data.count_use += 1
+                self.db_data.date_last_use = datetime.timestamp(datetime.utcnow())
+                db.session.commit()
+            return {'data': self.db_data.url, 'comment': 'URL executed from DataBase'}
+        else:
+            raise Exception('short url incorrect')
 
     def is_correct(self, short_url):
         self.db_data = ModelURL.query.filter_by(short_url=short_url).first()
@@ -85,10 +124,13 @@ def index():
 @app.route('/<short_url>')
 def link(short_url):
     service = Service() ### Жека, этот экземпляр надо как-то удалять? Типо они сами удаляются или мы так и будем хранить миллион экземпляров?
-    if service.is_correct(short_url):
-        return render_template('redirect.html', data={'data': service.db_data.url, 'comment': 'URL executed from DataBase'})
-    else:
-        return render_template('wrong.html', data={'data': None, 'comment': 'There is not this short URL in DataBase'})
+    try:
+        data = service.link_url(short_url)
+        return render_template('redirect.html', data=data)
+    except Exception as e:
+        print(e)
+        data = {'data': None, 'comment': 'There is not this short URL in DataBase'}
+        return render_template('wrong.html', data=data)
 
 
 # API

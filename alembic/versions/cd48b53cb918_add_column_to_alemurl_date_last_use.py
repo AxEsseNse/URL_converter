@@ -1,4 +1,4 @@
-"""add to table alemurl column date_last_use
+"""add to table url column date_last_use
 
 Revision ID: cd48b53cb918
 Revises: 886c2c531b2a
@@ -18,8 +18,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column('alemurl', sa.Column('date_last_use', sa.Float(), default=datetime.timestamp(datetime.utcnow())))
+    op.add_column('url', sa.Column('date_last_use', sa.Float(), default=datetime.timestamp(datetime.utcnow())))
 
 
 def downgrade() -> None:
-    op.drop_column('alemurl', 'date_last_use')
+    op.drop_column('url', 'date_last_use')

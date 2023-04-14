@@ -1,4 +1,4 @@
-"""init
+"""init. Create table url
 
 Revision ID: c5fb847f089d
 Revises: 
@@ -18,7 +18,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.create_table('alemurl',
+    op.create_table('url',
                     sa.Column('id', sa.Integer(), nullable=False, primary_key=True),
                     sa.Column('short_url', sa.Text(), unique=True),
                     sa.Column('url', sa.Text(), unique=True),
@@ -27,4 +27,4 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_table('alemurl')
+    op.drop_table('url')

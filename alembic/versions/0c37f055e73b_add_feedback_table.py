@@ -1,4 +1,4 @@
-"""add table alemfeedback
+"""add table feedback
 
 Revision ID: 0c37f055e73b
 Revises: c5fb847f089d
@@ -18,7 +18,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.create_table('alemfeedback',
+    op.create_table('feedback',
                     sa.Column('id', sa.Integer(), nullable=False, primary_key=True),
                     sa.Column('msg', sa.Text(), unique=True),
                     sa.Column('date', sa.Float(), default=datetime.timestamp(datetime.utcnow())),
@@ -26,4 +26,4 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_table('alemfeedback')
+    op.drop_table('feedback')

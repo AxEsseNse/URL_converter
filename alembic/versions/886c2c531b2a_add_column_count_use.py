@@ -1,4 +1,4 @@
-"""add to table alemurl column count_use
+"""add to table url column count_use
 
 Revision ID: 886c2c531b2a
 Revises: 0c37f055e73b
@@ -17,8 +17,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column('alemurl', sa.Column('count_use', sa.Integer(), default=1))
+    op.add_column('url', sa.Column('count_use', sa.Integer(), default=1))
 
 
 def downgrade() -> None:
-    op.drop_column('alemurl', 'count_use')
+    op.drop_column('url', 'count_use')
